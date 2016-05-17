@@ -13,8 +13,21 @@ from mapclientplugins.fieldworkgait2392musclehmfstep.gait2392musclecusthmf impor
 
 class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
     '''
-    Skeleton step which is intended to be a helpful starting point
-    for new steps.
+    MAP Client plugin for customising the OpenSim Gait2392 model muscle points
+    using host-mesh fitting.
+
+    Inputs
+    ------
+    gias-lowerlimb : GIAS2 LowerlimbAtlas instance
+        Lower limb model with customised lower limb bone geometry and pose
+    osimmodel : OpenSim model instance
+        The opensim model to modify. Should be output from a step that
+        modified the body geometries.
+
+    Outputs
+    -------
+    osimmodel : OpenSim model instance
+        Modified opensim model
     '''
 
     def __init__(self, location):
@@ -44,7 +57,6 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
         self._config['in_unit'] = 'mm'
         self._config['out_unit'] = 'm'
         self._config['write_osim_file'] = True
-        self._config['side'] = 'left'
         self._config['static_vas'] = True
 
         self._g2392_muscle_hmf = gait2392MuscleCustomiser(self._config)

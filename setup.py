@@ -13,7 +13,7 @@ requires = readfile("requirements.txt")
 license = readfile("LICENSE")
 
 setup(name=u'mapclientplugins.fieldworkgait2392musclehmfstep',
-      version='0.0.0',
+      version='0.1',
       description='',
       long_description=readme + license,
       classifiers=[],

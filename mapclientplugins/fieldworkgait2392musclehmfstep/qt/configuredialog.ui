@@ -20,6 +20,9 @@
       <string/>
      </property>
      <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label0">
         <property name="text">
@@ -37,6 +40,9 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboBox_in_unit"/>
+      </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label3">
         <property name="text">
@@ -44,44 +50,45 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label1">
-        <property name="text">
-         <string>Output folder:</string>
-        </property>
-       </widget>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="comboBox_out_unit"/>
       </item>
-      <item row="4" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="label4">
         <property name="text">
          <string>Write Osim file</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label5">
-        <property name="text">
-         <string>Side:  </string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="1">
-       <widget class="QComboBox" name="comboBox_side"/>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="comboBox_in_unit"/>
-      </item>
-      <item row="2" column="1">
-       <widget class="QComboBox" name="comboBox_out_unit"/>
-      </item>
-      <item row="4" column="1">
        <widget class="QCheckBox" name="checkBox_write_osim_file">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="6" column="1">
+      <item row="4" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Static Vastus:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="checkBox_static_vas">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label1">
+        <property name="text">
+         <string>Output folder:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLineEdit" name="lineEdit_osim_output_dir"/>
@@ -94,20 +101,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Static Vastus:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QCheckBox" name="checkBox_static_vas">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -128,7 +121,6 @@
   <tabstop>lineEdit0</tabstop>
   <tabstop>comboBox_in_unit</tabstop>
   <tabstop>comboBox_out_unit</tabstop>
-  <tabstop>comboBox_side</tabstop>
   <tabstop>checkBox_write_osim_file</tabstop>
   <tabstop>checkBox_static_vas</tabstop>
   <tabstop>lineEdit_osim_output_dir</tabstop>

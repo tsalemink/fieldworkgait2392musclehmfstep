@@ -20,7 +20,6 @@ VALID_SEGS = set(['pelvis',
                   ])
 OSIM_FILENAME = 'gait2392_simbody.osim'
 VALID_UNITS = ('nm', 'um', 'mm', 'cm', 'm', 'km')
-SIDES = ('left', 'right')
 
 def dim_unit_scaling(in_unit, out_unit):
     """
@@ -490,21 +489,21 @@ class gait2392MuscleCustomiser(object):
 
     def cust_femur_l(self):
         self.femur_l_res = cust_segment_muscle_points(
-            'femur_l', self.ll.models['femur'], self.gias_osimmodel,
+            'femur_l', self.ll.models['femur-l'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
             )
 
     def cust_femur_r(self):
         self.femur_r_res = cust_segment_muscle_points(
-            'femur_r', self.ll.models['femur'], self.gias_osimmodel,
+            'femur_r', self.ll.models['femur-r'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
             )
 
     def cust_tibia_l(self):
         self.tibia_l_res = cust_segment_muscle_points(
-            'tibia_l', self.ll.models['tibiafibula'], self.gias_osimmodel,
+            'tibia_l', self.ll.models['tibiafibula-l'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
             static_vas=self.config['static_vas']
@@ -512,7 +511,7 @@ class gait2392MuscleCustomiser(object):
 
     def cust_tibia_r(self):
         self.tibia_r_res = cust_segment_muscle_points(
-            'tibia_r', self.ll.models['tibiafibula'], self.gias_osimmodel,
+            'tibia_r', self.ll.models['tibiafibula-r'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
             static_vas=self.config['static_vas']
@@ -525,18 +524,10 @@ class gait2392MuscleCustomiser(object):
 
     def customise(self):
         self.cust_pelvis()
-        if self.config['side']=='left':
-            self.cust_femur_l()
-            self.cust_tibia_l()
-        elif self.config['side']=='right':
-            self.cust_femur_r()
-            self.cust_tibia_r()
-        # elif self.config['side']='both':
-        #     self.cust_femur_l()
-        #     self.cust_tibia_l()
-        #     self.cust_femur_r()
-        #     self.cust_tibia_r()
-
+        self.cust_femur_l()
+        self.cust_tibia_l()
+        self.cust_femur_r()
+        self.cust_tibia_r()
         if self.config['write_osim_file']:
             self.write_cust_osim_model()
 
