@@ -57,7 +57,8 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
         self._config['in_unit'] = 'mm'
         self._config['out_unit'] = 'm'
         self._config['write_osim_file'] = True
-        self._config['static_vas'] = True
+        self._config['update_knee_splines'] = False
+        self._config['static_vas'] = False
 
         self._g2392_muscle_hmf = gait2392MuscleCustomiser(self._config)
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt/configuredialog.ui'
 #
-# Created: Wed May 18 10:21:10 2016
+# Created: Fri Jul 15 14:22:18 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,14 +48,14 @@ class Ui_ConfigureDialog(object):
         self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.checkBox_write_osim_file)
         self.label = QtGui.QLabel(self.configGroupBox)
         self.label.setObjectName("label")
-        self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label)
         self.checkBox_static_vas = QtGui.QCheckBox(self.configGroupBox)
         self.checkBox_static_vas.setText("")
         self.checkBox_static_vas.setObjectName("checkBox_static_vas")
-        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.checkBox_static_vas)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.checkBox_static_vas)
         self.label1 = QtGui.QLabel(self.configGroupBox)
         self.label1.setObjectName("label1")
-        self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label1)
+        self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.label1)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.lineEdit_osim_output_dir = QtGui.QLineEdit(self.configGroupBox)
@@ -64,7 +64,14 @@ class Ui_ConfigureDialog(object):
         self.pushButton_osim_output_dir = QtGui.QPushButton(self.configGroupBox)
         self.pushButton_osim_output_dir.setObjectName("pushButton_osim_output_dir")
         self.horizontalLayout.addWidget(self.pushButton_osim_output_dir)
-        self.formLayout.setLayout(5, QtGui.QFormLayout.FieldRole, self.horizontalLayout)
+        self.formLayout.setLayout(6, QtGui.QFormLayout.FieldRole, self.horizontalLayout)
+        self.label_2 = QtGui.QLabel(self.configGroupBox)
+        self.label_2.setObjectName("label_2")
+        self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_2)
+        self.checkBox_update_knee_splines = QtGui.QCheckBox(self.configGroupBox)
+        self.checkBox_update_knee_splines.setText("")
+        self.checkBox_update_knee_splines.setObjectName("checkBox_update_knee_splines")
+        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.checkBox_update_knee_splines)
         self.gridLayout.addWidget(self.configGroupBox, 0, 0, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(ConfigureDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -89,8 +96,9 @@ class Ui_ConfigureDialog(object):
         self.label0.setText(QtGui.QApplication.translate("ConfigureDialog", "identifier:  ", None, QtGui.QApplication.UnicodeUTF8))
         self.label2.setText(QtGui.QApplication.translate("ConfigureDialog", "Input unit:", None, QtGui.QApplication.UnicodeUTF8))
         self.label3.setText(QtGui.QApplication.translate("ConfigureDialog", "Output unit:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label4.setText(QtGui.QApplication.translate("ConfigureDialog", "Write Osim file", None, QtGui.QApplication.UnicodeUTF8))
+        self.label4.setText(QtGui.QApplication.translate("ConfigureDialog", "Write Osim file:", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("ConfigureDialog", "Static Vastus:", None, QtGui.QApplication.UnicodeUTF8))
         self.label1.setText(QtGui.QApplication.translate("ConfigureDialog", "Output folder:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_osim_output_dir.setText(QtGui.QApplication.translate("ConfigureDialog", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("ConfigureDialog", "Update Knee Splines:", None, QtGui.QApplication.UnicodeUTF8))
 

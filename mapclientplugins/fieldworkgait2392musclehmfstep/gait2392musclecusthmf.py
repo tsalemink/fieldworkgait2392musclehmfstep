@@ -195,7 +195,7 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
     host_elems = [1,1,1] # a single element host mesh [x,y,z]
     maxit = 50
     sobd = [4,4,4]
-    sobw = 1e-6
+    sobw = 1e-5
     xtol = 1e-6
 
     source_points_fitting = osim_surf_pts
@@ -298,6 +298,14 @@ def _map_local_coords(segment_name, target_model, global_pts):
         _update_tibiafibula_opensim_acs(_target_model)
     return _target_model.acs.map_local(global_pts)
 
+    # x  =_target_model.acs.map_local(global_pts)
+    # print(segment_name)
+    # if '_l' in segment_name:
+    #     print('flipping z')
+    #     x[2] = -1.0*x[2]
+
+    # return x
+
 def _update_osim_segment_muscle_points(omodel, labels, coords, in_unit, out_unit):
     """
     Modify muscle point coordinates in an opensim model
@@ -312,14 +320,22 @@ def _update_osim_segment_muscle_points(omodel, labels, coords, in_unit, out_unit
             muscle_name = l.split('-')[0]
             omodel.muscles[muscle_name].path_points[l].location = coords[li]
 
-def _update_osim_tibia_vas_spline(side, omodel, labels, coords, in_unit, out_unit, static):
+def _update_osim_tibia_muscle_splines(side, omodel, labels, coords, in_unit, out_unit, static):
     """
     Modify tibia's vastus muscle splines. Spline point labels should have format:
     vas_{med|int|lat}_{l|r}-P[p]-simmspline-[n] where p is the path point number
     and n is an integer denoting the number of the spline point.
+
+    If static is True, all the y value of each spline will be replaced with the 'location'
+    value of each path point.
     """
     # convert back to meters
     coords = coords*dim_unit_scaling(in_unit, out_unit)
+
+    # remove multiplier functions on SpatialTransforms
+    # _remove_multiplier(
+    #     omodel.muscles['vas_med_{}'.format(side)].
+    #     )
 
     def _get_coords_by_name(name):
         """
@@ -344,6 +360,10 @@ def _update_osim_tibia_vas_spline(side, omodel, labels, coords, in_unit, out_uni
         if static:
             # get the static location of the path point
             pp = omodel.muscles[muscle_name].path_points['{}-P{}'.format(muscle_name, pathpoint)]
+
+            # remove any multiplierfunctions
+            # _remove_multiplier(pp.getXFunction())
+
             # get current spline values and replace spline y values with the new
             # ones
             sx, sy, sz = pp.getSimmSplineParams()
@@ -369,9 +389,10 @@ def _update_osim_tibia_vas_spline(side, omodel, labels, coords, in_unit, out_uni
     _update_muscle('vas_med_{}'.format(side), '5')
     _update_muscle('vas_int_{}'.format(side), '4')
     _update_muscle('vas_lat_{}'.format(side), '5')
+    _update_muscle('rect_fem_{}'.format(side), '3')
 
 def cust_segment_muscle_points(segment_name, target_model, omodel,
-    in_unit='mm', out_unit='m', static_vas=True):
+    in_unit='mm', out_unit='m', update_knee_splines=True, static_vas=False):
     """
     Customise Gait2392 muscle point coordinates based on customised bone
     geometries. The reference gait2392 muscle points are embedded in 
@@ -392,10 +413,15 @@ def cust_segment_muscle_points(segment_name, target_model, omodel,
         Input unit, see dim_unit_scaling.
     out_unit : str [optional]
         Output unit, see dim_unit_scaling.
-    static_vas : bool [optional, default=True]
-        If true, uses the same customised path point coordinate for
+    updatekneesplines : bool [optional, default=False]
+        If True, modifies the moving pathpoints of the rectus femoris,
+        vastus lat, med, and int using host-mesh-fitted points.
+        Since the spline points represente patella trajectory, there
+        is no good reason to do this.
+    static_vas : bool [optional, default=False]
+        If True, uses the same customised path point coordinate for
         all point along the spline of the patella insertion of the
-        vastus muscles. Else, uses the HMF'd spline coordinates. 
+        vastus muscles. updatekneesplines must be True.
 
     Returns
     -------
@@ -408,13 +434,16 @@ def cust_segment_muscle_points(segment_name, target_model, omodel,
                 segment_name, VALID_SEGS
                 )
             )
+    else:
+        print('Customising muscle point in {}'.format(segment_name))
 
     # load reference segment data
     targ_pts = target_model.gf.get_all_point_positions()
     (osim_surf_pts, osim_muscle_pts,
     osim_surf_xi, osim_muscle_xi,
     osim_muscle_labels,
-    host_mesh) =  _osim_segment_data(segment_name, in_unit)
+    host_mesh_0) =  _osim_segment_data(segment_name, in_unit)
+    host_mesh = copy.deepcopy(host_mesh_0)
 
     # host mesh fit reference segment to target model
     cust_muscle_pts, rmse, cust_surf_pts = _hmf_seg(
@@ -432,20 +461,21 @@ def cust_segment_muscle_points(segment_name, target_model, omodel,
         omodel, osim_muscle_labels, cust_muscle_pts_local, in_unit, out_unit
         )
 
-    # for tibia_l and tibia_r, need to define new vas P-5 spline
-    if segment_name=='tibia_l':
-        _update_osim_tibia_vas_spline(
-            'l', omodel, osim_muscle_labels, cust_muscle_pts_local,
-            in_unit, out_unit, static_vas
-            )
-    elif segment_name=='tibia_r':
-        _update_osim_tibia_vas_spline(
-            'r', omodel, osim_muscle_labels, cust_muscle_pts_local,
-            in_unit, out_unit, static_vas
-            )
+    if update_knee_splines:
+        # for tibia_l and tibia_r, need to define new MovingPathPoints
+        if segment_name=='tibia_l':
+            _update_osim_tibia_muscle_splines(
+                'l', omodel, osim_muscle_labels, cust_muscle_pts_local,
+                in_unit, out_unit, static_vas
+                )
+        elif segment_name=='tibia_r':
+            _update_osim_tibia_muscle_splines(
+                'r', omodel, osim_muscle_labels, cust_muscle_pts_local,
+                in_unit, out_unit, static_vas
+                )
 
     return (targ_pts, osim_surf_pts, osim_muscle_pts, cust_surf_pts,
-            cust_muscle_pts, host_mesh
+            cust_muscle_pts, host_mesh, host_mesh_0
             )
 
 class gait2392MuscleCustomiser(object):
@@ -463,7 +493,8 @@ class gait2392MuscleCustomiser(object):
             'in_unit': 'mm',
             'out_unit': 'm',
             'write_osim_file': True,
-            'side': 'left',
+            'update_knee_splines': False,
+            'static_vas': False,
             }
         ll : LowerLimbAtlas instance
             Model of lower limb bone geometry and pose
@@ -476,6 +507,9 @@ class gait2392MuscleCustomiser(object):
         self.gias_osimmodel = None
         if osimmodel is not None:
             self.set_osim_model(osimmodel)
+        self._unit_scaling = dim_unit_scaling(
+            self.config['in_unit'], self.config['out_unit']
+            )
 
     def set_osim_model(self, model):
         self.gias_osimmodel = osim.Model(model=model)
@@ -506,6 +540,7 @@ class gait2392MuscleCustomiser(object):
             'tibia_l', self.ll.models['tibiafibula-l'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
+            update_knee_splines=self.config['update_knee_splines'],
             static_vas=self.config['static_vas']
             )
 
@@ -514,6 +549,7 @@ class gait2392MuscleCustomiser(object):
             'tibia_r', self.ll.models['tibiafibula-r'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
+            update_knee_splines=self.config['update_knee_splines'],
             static_vas=self.config['static_vas']
             )
 
@@ -523,12 +559,74 @@ class gait2392MuscleCustomiser(object):
             )
 
     def customise(self):
+
+        init_muscle_ofl = dict([(m.name, m.optimalFiberLength) for m in self.gias_osimmodel.muscles.values()])
+        init_muscle_tsl = dict([(m.name, m.tendonSlackLength) for m in self.gias_osimmodel.muscles.values()])
+        
+        # prescale muscles
+        self.prescale_muscles()
+
+        prescale_muscle_ofl = dict([(m.name, m.optimalFiberLength) for m in self.gias_osimmodel.muscles.values()])
+        prescale_muscle_tsl = dict([(m.name, m.tendonSlackLength) for m in self.gias_osimmodel.muscles.values()])
+
         self.cust_pelvis()
         self.cust_femur_l()
         self.cust_tibia_l()
         self.cust_femur_r()
         self.cust_tibia_r()
+        
+        # post-scale muscles
+        self.postscale_muscles()
+
+        postscale_muscle_ofl = dict([(m.name, m.optimalFiberLength) for m in self.gias_osimmodel.muscles.values()])
+        postscale_muscle_tsl = dict([(m.name, m.tendonSlackLength) for m in self.gias_osimmodel.muscles.values()])
+
+        for mn in sorted(self.gias_osimmodel.muscles.keys()):
+            print('{} OFL: {:8.6f} -> {:8.6f} -> {:8.6f}'.format(
+                mn, 
+                init_muscle_ofl[mn],
+                prescale_muscle_ofl[mn],
+                postscale_muscle_ofl[mn]
+                )
+            )
+        for mn in sorted(self.gias_osimmodel.muscles.keys()):
+            print('{} TSL: {:8.6f} -> {:8.6f} -> {:8.6f}'.format(
+                mn, 
+                init_muscle_tsl[mn],
+                prescale_muscle_tsl[mn],
+                postscale_muscle_tsl[mn]
+                )
+            )
+
         if self.config['write_osim_file']:
             self.write_cust_osim_model()
+
+    def prescale_muscles(self):
+        """
+        Apply prescaling and scaling to muscles before bodies and joints are
+        customised
+        """
+        state_0 = self.gias_osimmodel._model.initSystem()
+
+        # create dummy scale factor
+        scale_factors = [
+            osim.Scale([1,1,1], 'dummy_scale', 'dummy_body')
+            ]
+        for m in self.gias_osimmodel.muscles.values():
+            m.preScale(state_0, *scale_factors)
+            # m.scale(state_0, *scale_factors)
+
+    def postscale_muscles(self):
+        """
+        Postscale muscles after bodies and joints are customised to update
+        optimal fiber lengths and tendon slack lengths
+        """
+        state_1 = self.gias_osimmodel._model.initSystem()
+        # create dummy scale factor
+        scale_factors = [
+            osim.Scale([1,1,1], 'dummy_scale', 'dummy_body')
+            ]
+        for m in self.gias_osimmodel.muscles.values():
+            m.postScale(state_1, *scale_factors)
 
 

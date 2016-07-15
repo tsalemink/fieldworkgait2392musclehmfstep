@@ -1,5 +1,6 @@
 {
     "dimensions": 3, 
+    "ensemble_field": "tibia_l.hostmesh", 
     "ensemble_point_counter": 64, 
     "field_parameters": {
         "node 00000000": {

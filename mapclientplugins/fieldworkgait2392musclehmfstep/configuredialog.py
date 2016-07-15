@@ -98,6 +98,10 @@ class ConfigureDialog(QtGui.QDialog):
             config['write_osim_file'] = True
         else:
             config['write_osim_file'] = False
+        if self._ui.checkBox_update_knee_splines.isChecked():
+            config['update_knee_splines'] = True
+        else:
+            config['update_knee_splines'] = False
         if self._ui.checkBox_static_vas.isChecked():
             config['static_vas'] = True
         else:
@@ -129,6 +133,13 @@ class ConfigureDialog(QtGui.QDialog):
             self._ui.checkBox_write_osim_file.setChecked(bool(True))
         else:
             self._ui.checkBox_write_osim_file.setChecked(bool(False))
+
+        if config.get('update_knee_splines') is None:
+            config['update_knee_splines'] = False
+        if config['update_knee_splines']:
+            self._ui.checkBox_update_knee_splines.setChecked(bool(True))
+        else:
+            self._ui.checkBox_update_knee_splines.setChecked(bool(False))
 
         if config['static_vas']:
             self._ui.checkBox_static_vas.setChecked(bool(True))

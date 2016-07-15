@@ -4,6 +4,7 @@
     }, 
     "custom_map": null, 
     "dimensions": 3, 
+    "mesh": "tibia_r.hostmesh", 
     "name": "host", 
     "subfield_counter": 0, 
     "subfields": {}
