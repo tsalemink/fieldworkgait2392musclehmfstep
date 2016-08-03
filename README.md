@@ -31,6 +31,12 @@ Outputs
 -------
 - **osimmodel** [opensim.Model instance] : The customised Gait2392 opensim model.
 
+Usage
+-----
+This step is intended to customise the muscle geometry and properties in an input Gait2392 OpenSim lower limb model based on the geometry of an input lower limb model from the _Fieldwork Lowerlimb 2-side Generation Step_.
+
+This step does not have a workflow-runtime GUI. It will simply attempt to perform the customisations automatically based on its configurations.
+
 Configurations
 --------------
 - **identifier** : Unique name for the step.
