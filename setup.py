@@ -17,8 +17,7 @@ license = readfile("LICENSE")
 setup(name=u'mapclientplugins.fieldworkgait2392musclehmfstep',
     version='0.1.0',
     description='',
-    long_description='
-'.join(readme) + license,
+    long_description='\n'.join(readme) + license,
     classifiers=[
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Apache Software License",
