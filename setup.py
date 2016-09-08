@@ -13,6 +13,11 @@ def readfile(filename, split=False):
 readme = readfile("README.md")[3:]  # skip title
 requires = readfile("requirements.txt")
 license = readfile("LICENSE")
+package_data = {
+  'mapclientplugins.fieldworkgait2392musclehmfstep': [
+    'data/fieldwork_geometry/*',
+  ],
+}
 
 setup(name=u'mapclientplugins.fieldworkgait2392musclehmfstep',
     version='0.1.0',
@@ -30,6 +35,7 @@ setup(name=u'mapclientplugins.fieldworkgait2392musclehmfstep',
     packages=find_packages(exclude=['ez_setup',]),
     namespace_packages=['mapclientplugins'],
     include_package_data=True,
+    package_data=package_data,
     zip_safe=False,
     install_requires=requires,
     )
