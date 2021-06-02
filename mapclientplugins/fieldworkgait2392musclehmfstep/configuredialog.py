@@ -18,7 +18,7 @@ class ConfigureDialog(QtWidgets.QDialog):
         '''
         QtWidgets.QDialog.__init__(self, parent)
 
-        self._ui = Ui_ConfigureDialog(self._main_window)
+        self._ui = Ui_ConfigureDialog()
         self._ui.setupUi(self)
 
         # Keep track of the previous identifier so that we can track changes
