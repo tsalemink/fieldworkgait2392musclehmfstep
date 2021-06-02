@@ -4,7 +4,7 @@ MAP Client Plugin Step
 '''
 import json
 
-from PySide import QtGui
+from PySide2 import QtGui
 
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
 from mapclientplugins.fieldworkgait2392musclehmfstep.configuredialog import ConfigureDialog
@@ -100,7 +100,7 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
         then set:
             self._configured = True
         '''
-        dlg = ConfigureDialog()
+        dlg = ConfigureDialog(self._main_window)
         dlg.identifierOccursCount = self._identifierOccursCount
         dlg.setConfig(self._config)
         dlg.validate()
@@ -138,7 +138,7 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
         '''
         self._config.update(json.loads(string))
 
-        d = ConfigureDialog()
+        d = ConfigureDialog(self._main_window)
         d.identifierOccursCount = self._identifierOccursCount
         d.setConfig(self._config)
         self._configured = d.validate()
