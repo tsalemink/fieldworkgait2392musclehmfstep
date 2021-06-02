@@ -1,4 +1,3 @@
-
 import os
 from PySide2 import QtWidgets
 from mapclientplugins.fieldworkgait2392musclehmfstep.ui_configuredialog import Ui_ConfigureDialog
@@ -6,6 +5,7 @@ from mapclientplugins.fieldworkgait2392musclehmfstep.gait2392musclecusthmf impor
 
 INVALID_STYLE_SHEET = 'background-color: rgba(239, 0, 0, 50)'
 DEFAULT_STYLE_SHEET = ''
+
 
 class ConfigureDialog(QtWidgets.QDialog):
     '''
@@ -50,8 +50,9 @@ class ConfigureDialog(QtWidgets.QDialog):
         result = QtWidgets.QMessageBox.Yes
         if not self.validate():
             result = QtWidgets.QMessageBox.warning(self, 'Invalid Configuration',
-                'This configuration is invalid.  Unpredictable behaviour may result if you choose \'Yes\', are you sure you want to save this configuration?)',
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+                                                   'This configuration is invalid.  Unpredictable behaviour may result if you choose \'Yes\', are you sure you want to save this configuration?)',
+                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                                   QtWidgets.QMessageBox.No)
 
         if result == QtWidgets.QMessageBox.Yes:
             QtWidgets.QDialog.accept(self)
@@ -76,7 +77,7 @@ class ConfigureDialog(QtWidgets.QDialog):
             self._ui.lineEdit_osim_output_dir.setStyleSheet(DEFAULT_STYLE_SHEET)
         else:
             self._ui.lineEdit_osim_output_dir.setStyleSheet(INVALID_STYLE_SHEET)
-            
+
         valid = idValid and osimOutputDirValid
         self._ui.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(valid)
 
@@ -121,13 +122,13 @@ class ConfigureDialog(QtWidgets.QDialog):
         self._ui.comboBox_in_unit.setCurrentIndex(
             VALID_UNITS.index(
                 config['in_unit']
-                )
             )
+        )
         self._ui.comboBox_out_unit.setCurrentIndex(
             VALID_UNITS.index(
                 config['out_unit']
-                )
             )
+        )
 
         if config['write_osim_file']:
             self._ui.checkBox_write_osim_file.setChecked(bool(True))

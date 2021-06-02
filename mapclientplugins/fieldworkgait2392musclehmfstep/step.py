@@ -1,4 +1,3 @@
-
 '''
 MAP Client Plugin Step
 '''
@@ -32,10 +31,10 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
 
     def __init__(self, location):
         super(FieldworkGait2392MuscleHMFStep, self).__init__('Fieldwork Gait2392 Muscle HMF', location)
-        self._configured = False # A step cannot be executed until it has been configured.
+        self._configured = False  # A step cannot be executed until it has been configured.
         self._category = 'OpenSim'
         # Add any other initialisation code here:
-        self._icon =  QtGui.QImage(':/fieldworkgait2392musclehmfstep/images/morphometric.png')
+        self._icon = QtGui.QImage(':/fieldworkgait2392musclehmfstep/images/morphometric.png')
         # Ports:
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
@@ -47,9 +46,9 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel'))
         # Port data:
-        self._portData0 = None # http://physiomeproject.org/workflow/1.0/rdf-schema#gias-lowerlimb
-        self._portData1 = None # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
-        self._portData2 = None # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+        self._portData0 = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#gias-lowerlimb
+        self._portData1 = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+        self._portData2 = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
         # Config:
         self._config = {}
         self._config['identifier'] = ''
@@ -80,9 +79,10 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
         uses port for this step then the index can be ignored.
         '''
         if index == 0:
-            self._g2392_muscle_hmf.ll = dataIn # http://physiomeproject.org/workflow/1.0/rdf-schema#gias-lowerlimb
+            self._g2392_muscle_hmf.ll = dataIn  # http://physiomeproject.org/workflow/1.0/rdf-schema#gias-lowerlimb
         elif index == 1:
-            self._g2392_muscle_hmf.set_osim_model(dataIn) # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+            self._g2392_muscle_hmf.set_osim_model(
+                dataIn)  # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
 
     def getPortData(self, index):
         '''
@@ -90,7 +90,7 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
         The index is the index of the port in the port list.  If there is only one
         provides port for this step then the index can be ignored.
         '''
-        return self._g2392_muscle_hmf.gias_osimmodel._model # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+        return self._g2392_muscle_hmf.gias_osimmodel._model  # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
 
     def configure(self):
         '''
@@ -142,5 +142,3 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
         d.identifierOccursCount = self._identifierOccursCount
         d.setConfig(self._config)
         self._configured = d.validate()
-
-
