@@ -21,6 +21,7 @@ VALID_SEGS = set(['pelvis',
 OSIM_FILENAME = 'gait2392_simbody.osim'
 VALID_UNITS = ('nm', 'um', 'mm', 'cm', 'm', 'km')
 
+
 def dim_unit_scaling(in_unit, out_unit):
     """
     Calculate the scaling factor to convert from the input unit (in_unit) to
@@ -44,24 +45,25 @@ def dim_unit_scaling(in_unit, out_unit):
         'um': 1e-6,
         'mm': 1e-3,
         'cm': 1e-2,
-        'm':  1.0,
+        'm': 1.0,
         'km': 1e3,
-        }
+    }
 
     if in_unit not in unit_vals:
         raise ValueError(
             'Invalid input unit {}. Must be one of {}'.format(
                 in_unit, list(unit_vals.keys())
-                )
             )
+        )
     if out_unit not in unit_vals:
         raise ValueError(
             'Invalid input unit {}. Must be one of {}'.format(
                 in_unit, list(unit_vals.keys())
-                )
             )
+        )
 
-    return unit_vals[in_unit]/unit_vals[out_unit]
+    return unit_vals[in_unit] / unit_vals[out_unit]
+
 
 def _update_femur_opensim_acs(femur_model):
     femur_model.acs.update(
@@ -70,8 +72,9 @@ def _update_femur_opensim_acs(femur_model):
             femur_model.landmarks['femur-MEC'],
             femur_model.landmarks['femur-LEC'],
             side=femur_model.side
-            )
         )
+    )
+
 
 def _update_tibiafibula_opensim_acs(tibiafibula_model):
     tibiafibula_model.acs.update(
@@ -81,8 +84,9 @@ def _update_tibiafibula_opensim_acs(tibiafibula_model):
             tibiafibula_model.landmarks['tibiafibula-MC'],
             tibiafibula_model.landmarks['tibiafibula-LC'],
             side=tibiafibula_model.side
-            )
         )
+    )
+
 
 def _osim_segment_data(name, out_unit):
     """
@@ -112,62 +116,63 @@ def _osim_segment_data(name, out_unit):
     """
 
     SURF_PTS_MULT = dim_unit_scaling('mm', out_unit)
-    MUSCLE_PTS_MULT = dim_unit_scaling('m', out_unit) #1e3
+    MUSCLE_PTS_MULT = dim_unit_scaling('m', out_unit)  # 1e3
 
-    #==================================================#
+    # ==================================================#
     # Precalculated for each segment: host-meshes, surface xi, muscle point xi
     gait2392_segments = (
         'pelvis',
         'femur_l', 'femur_r',
         'tibia_l', 'tibia_r',
-        )
+    )
     host_mesh_file_pat = '{}.hostmesh.{}'
     surf_ptcld_file_pat = '{}.nodes'
     surf_xi_file_pat = '{}.nodes.xi'
     muscle_ptcld_file_pat = '{}.muscles.txt'
     muscle_xi_file_pat = '{}.muscle.xi'
-    #=================================================#
+    # =================================================#
 
     # reference surface pointcloud & Xi
     osim_surf_pts = np.loadtxt(
         os.path.join(DATA_DIR, surf_ptcld_file_pat.format(name))
-        )
+    )
     osim_surf_pts *= SURF_PTS_MULT
-    
+
     _surf_xi = np.loadtxt(
         os.path.join(DATA_DIR, surf_xi_file_pat.format(name))
-        )
-    osim_surf_xi = [[l[0], np.array([l[1], l[2], l[3]])] for l in _surf_xi] 
+    )
+    osim_surf_xi = [[l[0], np.array([l[1], l[2], l[3]])] for l in _surf_xi]
 
     # reference muscle points, Xi & labels
     osim_muscle_labels = tuple(
         np.loadtxt(
             os.path.join(DATA_DIR, muscle_ptcld_file_pat.format(name)),
             usecols=(0,), dtype=str,
-            )
         )
+    )
     osim_muscle_pts = np.loadtxt(
         os.path.join(DATA_DIR, muscle_ptcld_file_pat.format(name)),
-        usecols=(1,2,3), dtype=float,
-        )
+        usecols=(1, 2, 3), dtype=float,
+    )
     osim_muscle_pts *= MUSCLE_PTS_MULT
     _muscle_xi = np.loadtxt(
         os.path.join(DATA_DIR, muscle_xi_file_pat.format(name))
-        )
-    osim_muscle_xi = [[l[0], np.array([l[1], l[2], l[3]])] for l in _muscle_xi] 
+    )
+    osim_muscle_xi = [[l[0], np.array([l[1], l[2], l[3]])] for l in _muscle_xi]
 
     # host mesh
     hm = geometric_field.load_geometric_field(
         os.path.join(DATA_DIR, host_mesh_file_pat.format(name, 'geof')),
         os.path.join(DATA_DIR, host_mesh_file_pat.format(name, 'ens')),
         os.path.join(DATA_DIR, host_mesh_file_pat.format(name, 'mesh')),
-        )
+    )
 
-    return osim_surf_pts, osim_muscle_pts, osim_surf_xi, osim_muscle_xi,\
-        osim_muscle_labels, hm
+    return osim_surf_pts, osim_muscle_pts, osim_surf_xi, osim_muscle_xi, \
+           osim_muscle_labels, hm
+
 
 def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
-    osim_surf_xi=None, osim_muscle_xi=None, host_mesh=None):
+             osim_surf_xi=None, osim_muscle_xi=None, host_mesh=None):
     """
 
     Inputs
@@ -190,11 +195,11 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
         Array of fitted source point coordinates
     """
 
-    host_mesh_pad = 0.25 # host mesh padding around slave points
-    host_elem_type = 'quad444' # quadrilateral cubic host elements
-    host_elems = [1,1,1] # a single element host mesh [x,y,z]
+    host_mesh_pad = 0.25  # host mesh padding around slave points
+    host_elem_type = 'quad444'  # quadrilateral cubic host elements
+    host_elems = [1, 1, 1]  # a single element host mesh [x,y,z]
     maxit = 50
-    sobd = [4,4,4]
+    sobd = [4, 4, 4]
     sobw = 1e-5
     xtol = 1e-6
 
@@ -204,9 +209,9 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
     source_points_all = np.vstack([
         source_points_fitting,
         source_points_passive
-        ])
+    ])
 
-    #=============================================================#
+    # =============================================================#
     # rigidly register source points to target points
     reg1_T, source_points_fitting_reg1, reg1_errors = af.fitRigid(
         source_points_fitting,
@@ -241,10 +246,10 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
     if host_mesh is not None:
         host_mesh.transformRigidScaleRotateAboutP(reg2_T, source_points_fitting.mean(0))
 
-    #=============================================================#
+    # =============================================================#
 
     def slave_func(x):
-        return ((x - target_points)**2.0).sum(1)
+        return ((x - target_points) ** 2.0).sum(1)
 
     # make host mesh
     if host_mesh is None:
@@ -262,13 +267,13 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
     else:
         source_points_passive_xi = host_mesh.find_closest_material_points(
             source_points_passive_reg2,
-            initGD=[50,50,50],
+            initGD=[50, 50, 50],
             verbose=True,
         )[0]
 
     # make passive source point evaluator function
     eval_source_points_passive = geometric_field.makeGeometricFieldEvaluatorSparse(
-        host_mesh, [1,1],
+        host_mesh, [1, 1],
         matPoints=source_points_passive_xi,
     )
 
@@ -290,6 +295,7 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
 
     return source_points_passive_hmf, rmse_hmf, source_points_fitting_hmf
 
+
 def _map_local_coords(segment_name, target_model, global_pts):
     _target_model = copy.deepcopy(target_model)
     if 'femur' in segment_name:
@@ -306,19 +312,21 @@ def _map_local_coords(segment_name, target_model, global_pts):
 
     # return x
 
+
 def _update_osim_segment_muscle_points(omodel, labels, coords, in_unit, out_unit):
     """
     Modify muscle point coordinates in an opensim model
     """
 
     # convert back to meters
-    coords = coords*dim_unit_scaling(in_unit, out_unit)
-    
+    coords = coords * dim_unit_scaling(in_unit, out_unit)
+
     for li, l in enumerate(labels):
         # skip points whose label contains the keyword
         if 'simmspline' not in l:
             muscle_name = l.split('-')[0]
             omodel.muscles[muscle_name].path_points[l].location = coords[li]
+
 
 def _update_osim_tibia_muscle_splines(side, omodel, labels, coords, in_unit, out_unit, static):
     """
@@ -330,7 +338,7 @@ def _update_osim_tibia_muscle_splines(side, omodel, labels, coords, in_unit, out
     value of each path point.
     """
     # convert back to meters
-    coords = coords*dim_unit_scaling(in_unit, out_unit)
+    coords = coords * dim_unit_scaling(in_unit, out_unit)
 
     # remove multiplier functions on SpatialTransforms
     # _remove_multiplier(
@@ -343,20 +351,20 @@ def _update_osim_tibia_muscle_splines(side, omodel, labels, coords, in_unit, out
         """
         inds = []
         named_labels = []
-        for li, l  in enumerate(labels):
+        for li, l in enumerate(labels):
             if name in l:
                 inds.append(li)
                 named_labels.append(l)
 
         _new_order = np.argsort(named_labels)
         inds = [inds[i] for i in _new_order]
-        return coords[inds,:]
+        return coords[inds, :]
 
     def _update_muscle(muscle_name, pathpoint):
         """
         Update the y values of the specified muscles pathpoint spline
         """
-        
+
         if static:
             # get the static location of the path point
             pp = omodel.muscles[muscle_name].path_points['{}-P{}'.format(muscle_name, pathpoint)]
@@ -367,9 +375,9 @@ def _update_osim_tibia_muscle_splines(side, omodel, labels, coords, in_unit, out
             # get current spline values and replace spline y values with the new
             # ones
             sx, sy, sz = pp.getSimmSplineParams()
-            _x = np.array([pp.location[0],]*sx.shape[1])
-            _y = np.array([pp.location[1],]*sy.shape[1])
-            _z = np.array([pp.location[2],]*sz.shape[1])
+            _x = np.array([pp.location[0], ] * sx.shape[1])
+            _y = np.array([pp.location[1], ] * sy.shape[1])
+            _z = np.array([pp.location[2], ] * sz.shape[1])
             sx[1] = _x
             sy[1] = _y
             sz[1] = _z
@@ -391,8 +399,9 @@ def _update_osim_tibia_muscle_splines(side, omodel, labels, coords, in_unit, out
     _update_muscle('vas_lat_{}'.format(side), '5')
     _update_muscle('rect_fem_{}'.format(side), '3')
 
+
 def cust_segment_muscle_points(segment_name, target_model, omodel,
-    in_unit='mm', out_unit='m', update_knee_splines=True, static_vas=False):
+                               in_unit='mm', out_unit='m', update_knee_splines=True, static_vas=False):
     """
     Customise Gait2392 muscle point coordinates based on customised bone
     geometries. The reference gait2392 muscle points are embedded in 
@@ -432,51 +441,52 @@ def cust_segment_muscle_points(segment_name, target_model, omodel,
         raise ValueError(
             'Invalid segment name {}. Must be one of {}.'.format(
                 segment_name, VALID_SEGS
-                )
             )
+        )
     else:
         print('Customising muscle point in {}'.format(segment_name))
 
     # load reference segment data
     targ_pts = target_model.gf.get_all_point_positions()
     (osim_surf_pts, osim_muscle_pts,
-    osim_surf_xi, osim_muscle_xi,
-    osim_muscle_labels,
-    host_mesh_0) =  _osim_segment_data(segment_name, in_unit)
+     osim_surf_xi, osim_muscle_xi,
+     osim_muscle_labels,
+     host_mesh_0) = _osim_segment_data(segment_name, in_unit)
     host_mesh = copy.deepcopy(host_mesh_0)
 
     # host mesh fit reference segment to target model
     cust_muscle_pts, rmse, cust_surf_pts = _hmf_seg(
         targ_pts, osim_surf_pts, osim_muscle_pts, osim_surf_xi,
         osim_muscle_xi, host_mesh
-        )
+    )
 
     # map new muscle positions to segment local CS
     cust_muscle_pts_local = _map_local_coords(
         segment_name, target_model, cust_muscle_pts
-        )
+    )
 
     # update osim file
     _update_osim_segment_muscle_points(
         omodel, osim_muscle_labels, cust_muscle_pts_local, in_unit, out_unit
-        )
+    )
 
     if update_knee_splines:
         # for tibia_l and tibia_r, need to define new MovingPathPoints
-        if segment_name=='tibia_l':
+        if segment_name == 'tibia_l':
             _update_osim_tibia_muscle_splines(
                 'l', omodel, osim_muscle_labels, cust_muscle_pts_local,
                 in_unit, out_unit, static_vas
-                )
-        elif segment_name=='tibia_r':
+            )
+        elif segment_name == 'tibia_r':
             _update_osim_tibia_muscle_splines(
                 'r', omodel, osim_muscle_labels, cust_muscle_pts_local,
                 in_unit, out_unit, static_vas
-                )
+            )
 
     return (targ_pts, osim_surf_pts, osim_muscle_pts, cust_surf_pts,
             cust_muscle_pts, host_mesh, host_mesh_0
             )
+
 
 class gait2392MuscleCustomiser(object):
 
@@ -509,7 +519,7 @@ class gait2392MuscleCustomiser(object):
             self.set_osim_model(osimmodel)
         self._unit_scaling = dim_unit_scaling(
             self.config['in_unit'], self.config['out_unit']
-            )
+        )
 
     def set_osim_model(self, model):
         self.gias_osimmodel = osim.Model(model=model)
@@ -519,21 +529,21 @@ class gait2392MuscleCustomiser(object):
             'pelvis', self.ll.models['pelvis'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
-            )
+        )
 
     def cust_femur_l(self):
         self.femur_l_res = cust_segment_muscle_points(
             'femur_l', self.ll.models['femur-l'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
-            )
+        )
 
     def cust_femur_r(self):
         self.femur_r_res = cust_segment_muscle_points(
             'femur_r', self.ll.models['femur-r'], self.gias_osimmodel,
             in_unit=self.config['in_unit'],
             out_unit=self.config['out_unit'],
-            )
+        )
 
     def cust_tibia_l(self):
         self.tibia_l_res = cust_segment_muscle_points(
@@ -542,7 +552,7 @@ class gait2392MuscleCustomiser(object):
             out_unit=self.config['out_unit'],
             update_knee_splines=self.config['update_knee_splines'],
             static_vas=self.config['static_vas']
-            )
+        )
 
     def cust_tibia_r(self):
         self.tibia_r_res = cust_segment_muscle_points(
@@ -551,18 +561,18 @@ class gait2392MuscleCustomiser(object):
             out_unit=self.config['out_unit'],
             update_knee_splines=self.config['update_knee_splines'],
             static_vas=self.config['static_vas']
-            )
+        )
 
     def write_cust_osim_model(self):
         self.gias_osimmodel.save(
             os.path.join(str(self.config['osim_output_dir']), OSIM_FILENAME)
-            )
+        )
 
     def customise(self):
 
         init_muscle_ofl = dict([(m.name, m.optimalFiberLength) for m in self.gias_osimmodel.muscles.values()])
         init_muscle_tsl = dict([(m.name, m.tendonSlackLength) for m in self.gias_osimmodel.muscles.values()])
-        
+
         # prescale muscles
         self.prescale_muscles()
 
@@ -574,7 +584,7 @@ class gait2392MuscleCustomiser(object):
         self.cust_tibia_l()
         self.cust_femur_r()
         self.cust_tibia_r()
-        
+
         # post-scale muscles
         self.postscale_muscles()
 
@@ -583,19 +593,19 @@ class gait2392MuscleCustomiser(object):
 
         for mn in sorted(self.gias_osimmodel.muscles.keys()):
             print('{} OFL: {:8.6f} -> {:8.6f} -> {:8.6f}'.format(
-                mn, 
+                mn,
                 init_muscle_ofl[mn],
                 prescale_muscle_ofl[mn],
                 postscale_muscle_ofl[mn]
-                )
+            )
             )
         for mn in sorted(self.gias_osimmodel.muscles.keys()):
             print('{} TSL: {:8.6f} -> {:8.6f} -> {:8.6f}'.format(
-                mn, 
+                mn,
                 init_muscle_tsl[mn],
                 prescale_muscle_tsl[mn],
                 postscale_muscle_tsl[mn]
-                )
+            )
             )
 
         if self.config['write_osim_file']:
@@ -610,8 +620,8 @@ class gait2392MuscleCustomiser(object):
 
         # create dummy scale factor
         scale_factors = [
-            osim.Scale([1,1,1], 'dummy_scale', 'dummy_body')
-            ]
+            osim.Scale([1, 1, 1], 'dummy_scale', 'dummy_body')
+        ]
         for m in self.gias_osimmodel.muscles.values():
             m.preScale(state_0, *scale_factors)
             # m.scale(state_0, *scale_factors)
@@ -624,9 +634,7 @@ class gait2392MuscleCustomiser(object):
         state_1 = self.gias_osimmodel._model.initSystem()
         # create dummy scale factor
         scale_factors = [
-            osim.Scale([1,1,1], 'dummy_scale', 'dummy_body')
-            ]
+            osim.Scale([1, 1, 1], 'dummy_scale', 'dummy_body')
+        ]
         for m in self.gias_osimmodel.muscles.values():
             m.postScale(state_1, *scale_factors)
-
-
