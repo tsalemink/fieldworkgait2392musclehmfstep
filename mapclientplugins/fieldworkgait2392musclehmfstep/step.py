@@ -138,7 +138,7 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
         '''
         self._config.update(json.loads(string))
 
-        d = ConfigureDialog(self._main_window)
+        d = ConfigureDialog()
         d.identifierOccursCount = self._identifierOccursCount
         d.setConfig(self._config)
         self._configured = d.validate()
