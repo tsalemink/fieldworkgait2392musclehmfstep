@@ -12,6 +12,7 @@ from gias2.registration import alignment_fitting as af
 from gias2.musculoskeletal.bonemodels import bonemodels
 from gias2.musculoskeletal import osim
 
+
 SELF_DIRECTORY = os.path.split(__file__)[0]
 DATA_DIR = os.path.join(SELF_DIRECTORY, 'data/fieldwork_geometry')
 VALID_SEGS = set(['pelvis',
