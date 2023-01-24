@@ -5,12 +5,12 @@ the bone surface
 import os
 import numpy as np
 import copy
-from gias2.fieldwork.field import geometric_field
-from gias2.fieldwork.field.tools import fitting_tools
-from gias2.common import transform3D
-from gias2.registration import alignment_fitting as af
-from gias2.musculoskeletal.bonemodels import bonemodels
-from gias2.musculoskeletal import osim
+from gias3.fieldwork.field import geometric_field
+from gias3.fieldwork.field.tools import fitting_tools
+from gias3.common import transform3D
+from gias3.registration import alignment_fitting as af
+from gias3.musculoskeletal.bonemodels import bonemodels
+from gias3.musculoskeletal import osim
 
 SELF_DIRECTORY = os.path.split(__file__)[0]
 DATA_DIR = os.path.join(SELF_DIRECTORY, 'data/fieldwork_geometry')
@@ -111,7 +111,7 @@ def _osim_segment_data(name, out_unit):
         Host-mesh Xi coordinates of osim_muscle_pts
     osim_muscle_labels : list of strings
         The names of each model point
-    hm : geometric_field instance
+    hm : GeometricField instance
         The host mesh
     """
 
@@ -218,7 +218,7 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
         target_points,
         xtol=1e-6,
         sample=1000,
-        outputErrors=1
+        output_errors=1
     )
 
     # add isotropic scaling to rigid registration
@@ -228,7 +228,7 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
         xtol=1e-6,
         sample=1000,
         t0=np.hstack([reg1_T, 1.0]),
-        outputErrors=1
+        output_errors=1
     )
 
     # apply same transforms to the passive slave points
@@ -274,7 +274,7 @@ def _hmf_seg(targ_pts, osim_surf_pts, osim_muscle_pts,
     # make passive source point evaluator function
     eval_source_points_passive = geometric_field.makeGeometricFieldEvaluatorSparse(
         host_mesh, [1, 1],
-        matPoints=source_points_passive_xi,
+        mat_points=source_points_passive_xi,
     )
 
     # host mesh fit

@@ -17,7 +17,7 @@ class FieldworkGait2392MuscleHMFStep(WorkflowStepMountPoint):
 
     Inputs
     ------
-    gias-lowerlimb : GIAS2 LowerlimbAtlas instance
+    gias-lowerlimb : GIAS3 LowerlimbAtlas instance
         Lower limb model with customised lower limb bone geometry and pose
     osimmodel : OpenSim model instance
         The opensim model to modify. Should be output from a step that

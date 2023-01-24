@@ -1,12 +1,12 @@
 Fieldwork Gait2392 Muscle HMF Step
 ==================================
-MAP Client plugin for customising the OpenSim Gait2392 model's muscle path points using a GIAS2 lowerlimb model (see fieldworklowerlimb2sidegenerationstep).
+MAP Client plugin for customising the OpenSim Gait2392 model's muscle path points using a GIAS3 lowerlimb model (see fieldworklowerlimb2sidegenerationstep).
 Path point customisation is applied to the following bodies: pelvis, femurs, tibias.
 
 For each body, the default Gait2392 path point coordinates associated with the body have been embedded in a host mesh along with the a dense cloud of point on the reference bone surface.
 The host mesh is a single-element tri-cubic Lagrange mesh. 
 When the step is executed, the embedded bone surface points are fitted to corresponding points on the input model's bone model by deforming the host mesh.
-Global coordinates of the embedded path points are evaluated from the deformed host mesh and transformed into body locals coordinates as the new path point coordinates.
+Global coordinates of the embedded path points are- evaluated from the deformed host mesh and transformed into body locals coordinates as the new path point coordinates.
 Finally, muscle optimal fibre length and tendon slack length are recalculated.
 
 The method is best suited to static path points. There are limitations with more complex path points:
@@ -19,12 +19,15 @@ Further development is required to resolve the issues above. For now, it is reco
 
 Requires
 --------
-- GIAS2: https://bitbucket.org/jangle/gias2
 - MAP Client: https://github.com/MusculoskeletalAtlasProject/mapclient
+- GIAS3 - Common: https://github.com/musculoskeletal/gias3.common
+- GIAS3 - Fieldwork: https://github.com/musculoskeletal/gias3.fieldwork
+- GIAS3 - Registration: https://github.com/musculoskeletal/gias3.registration
+- GIAS3 - Musculoskeletal: https://github.com/musculoskeletal/gias3.musculoskeletal
 
 Inputs
 ------
-- **gias-lowerlimb** [GIAS2 LowerLimbAtlas instance]: GIAS2 lowerlimb model to be used to customise Gait2392.
+- **gias-lowerlimb** [GIAS3 LowerLimbAtlas instance]: GIAS3 lowerlimb model to be used to customise Gait2392.
 - **osimmodel** [opensim.Model instance] : The Gait2392 opensim model to customise.
 
 Outputs
