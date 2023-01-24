@@ -1,5 +1,5 @@
 import os
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 from mapclientplugins.fieldworkgait2392musclehmfstep.ui_configuredialog import Ui_ConfigureDialog
 from mapclientplugins.fieldworkgait2392musclehmfstep.gait2392musclecusthmf import VALID_UNITS
 
